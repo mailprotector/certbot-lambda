@@ -80,7 +80,7 @@ def guarded_handler(event, context):
     emails = event['emails']
     domains = event['domains']
     s3_bucket = event['s3_bucket']  # The S3 bucket to publish certificates
-    s3_prefix = event['s3_prefex']  # The S3 key prefix to publish certificates
+    s3_prefix = event['s3_prefix']  # The S3 key prefix to publish certificates
     s3_region = event['s3_region']  # The AWS region of the S3 bucket
 
     obtain_certs(emails, domains, dns_plugin)
