@@ -6,7 +6,7 @@ import boto3
 import certbot.main
 
 # Let’s Encrypt acme-v02 server that supports wildcard certificates
-CERTBOT_SERVER = 'https://acme-v02.api.letsencrypt.org/directory'
+CERTBOT_SERVER = os.getenv('CERTBOT_URL')
 
 # Temp dir of Lambda runtime
 CERTBOT_DIR = '/tmp/certbot'
