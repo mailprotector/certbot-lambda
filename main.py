@@ -67,9 +67,8 @@ def upload_certs(s3_bucket, s3_prefix, s3_region):
         for filename in filenames:
             local_path = os.path.join(dirpath, filename)
             relative_path = os.path.relpath(local_path, cert_dir)
-            s3_key = os.path.join(s3_prefix, relative_path)
-            print(f'Uploading: {local_path} => s3://{s3_bucket}/{s3_key}')
-            client.upload_file(local_path, s3_bucket, s3_key)
+            print(f'Uploading: {local_path} => s3://{s3_bucket}/{s3_prefix}')
+            client.upload_file(local_path, s3_bucket, s3_prefix)
 
 
 def guarded_handler(event, context):
