@@ -130,17 +130,18 @@ resource "aws_lambda_function" "certbot" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "schedule" {
+  for_each            = var.certificates
   name_prefix         = local.name_prefix
-  description         = "Triggers lambda function ${aws_lambda_function.certbot.function_name} on a regular schedule."
-  schedule_expression = "cron(${var.cron_expression})"
+  description         = each.value.description
+  schedule_expression = each.value.schedule_expression
+  is_enabled          = each.value.is_enabled
 }
 
 resource "aws_cloudwatch_event_target" "schedule" {
-  rule = aws_cloudwatch_event_rule.schedule.name
-  arn  = aws_lambda_function.certbot.arn
-  # Since certbot lambda function gets all input from environment variables,
-  # an empty JSON object is good enough.
-  input = "{}"
+  for_each = var.certificates
+  rule     = aws_cloudwatch_event_rule.schedule[each.value.name].name
+  arn      = aws_lambda_function.certbot.arn
+  input    = jsonencode(each.value.input)
 }
 
 resource "aws_lambda_permission" "schedule" {
@@ -165,9 +166,6 @@ locals {
 
   certbot_version = "1.17.0"
 
-  certbot_emails  = join(",", var.emails)
-  certbot_domains = join(",", var.domains)
-
   lambda_handler  = "main.lambda_handler"
   lambda_filename = length(var.lambda_filename) > 0 ? var.lambda_filename : "${path.module}/../certbot/certbot-${local.certbot_version}.zip"
   lambda_hash     = filebase64sha256(local.lambda_filename)
@@ -175,11 +173,7 @@ locals {
   lambda_description = var.lambda_description != "" ? var.lambda_description : "Run certbot for ${local.certbot_domains}"
 
   lambda_environment = merge({
-    EMAILS     = local.certbot_emails
-    DOMAINS    = local.certbot_domains
-    DNS_PLUGIN = var.certbot_dns_plugin
-    S3_BUCKET  = var.upload_s3.bucket
-    S3_PREFIX  = var.upload_s3.prefix
-    S3_REGION  = var.upload_s3.region
+    DNS_PLUGIN  = var.certbot_dns_plugin
+    CERTBOT_URL = var.certbot_url
   }, var.lambda_custom_environment)
 }

@@ -94,8 +94,18 @@ variable "lambda_timeout" {
   default     = 300
 }
 
-variable "cron_expression" {
-  description = "A cron expression for CloudWatch event rule that triggers lambda. Default is 00:00:00+0800 at 1st day of every month."
+variable "certbot_url" {
+  description = "The let's encrypt endpoint to access. Allows for sending requests to staging for dev."
   type        = string
-  default     = "0 16 L * ? *"
+  default     = "https://acme-v02.api.letsencrypt.org/directory"
+}
+
+variable "certificates" {
+  type = map(object({
+    name                = string
+    description         = string
+    schedule_expression = string
+    is_enabled          = bool
+    input               = map(string)
+  }))
 }
