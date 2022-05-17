@@ -7,6 +7,7 @@ name: Create Release
 jobs:
   build:
     name: Create Release
+    runs-on: ubuntu-latest
     container: amazonlinux:latest
     steps:
       - name: Checkout code
