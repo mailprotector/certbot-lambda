@@ -1,0 +1,46 @@
+on:
+  push:
+    tags:
+      - "v*"
+
+name: Create Release
+jobs:
+  build:
+    name: Create Release
+    container: amazonlinux:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install pre-requisites
+        run: |
+          yum install amazon-linux-extras make zip git -y
+          amazon-linux-extras enable python3.8
+          yum install python3.8 -y
+          python3.8 -m ensurepip --upgrade
+
+      - name: Create lambda package
+        run: |
+          ./package.sh
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./certbot-lambda.zip
+          asset_name: certbot-lambda.zip
+          asset_content_type: application/zip
