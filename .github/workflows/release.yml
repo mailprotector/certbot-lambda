@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     container: amazonlinux:latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Install pre-requisites
         run: |
-          yum install amazon-linux-extras make zip git -y
+          yum install amazon-linux-extras make tar zip git -y
           amazon-linux-extras enable python3.8
           yum install python3.8 -y
           python3.8 -m ensurepip --upgrade
+
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Create lambda package
         run: |
