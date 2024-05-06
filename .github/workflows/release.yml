@@ -8,13 +8,13 @@ jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
-    container: amazonlinux:latest
+    container: public.ecr.aws/lambda/python:3.11
     steps:
       - name: Install pre-requisites
         run: |
           yum install make tar zip git -y
-          yum install python3.12 -y
-          python3.12 -m ensurepip --upgrade
+          yum install python3.11 -y
+          python3.11 -m ensurepip --upgrade
 
       - name: Checkout code
         uses: actions/checkout@v3
