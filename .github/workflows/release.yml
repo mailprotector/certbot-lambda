@@ -12,8 +12,7 @@ jobs:
     steps:
       - name: Install pre-requisites
         run: |
-          yum install amazon-linux-extras make tar zip git -y
-          amazon-linux-extras enable python3.12
+          yum install make tar zip git -y
           yum install python3.12 -y
           python3.12 -m ensurepip --upgrade
 
