@@ -8,7 +8,7 @@ jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
-    container: public.ecr.aws/lambda/python:3.11
+    container: public.ecr.aws/amazonlinux/amazonlinux:2023
     steps:
       - name: Install pre-requisites
         run: |
