@@ -42,14 +42,14 @@ The `certificates` variable is a map where each entry defines:
 ./package.sh
 ```
 This creates `certbot/certbot-lambda.zip` containing:
-1. Python 3.11 virtualenv with all requirements.txt dependencies
+1. Python 3.13 virtualenv with all requirements.txt dependencies
 2. main.py Lambda handler
-Uses Amazon Linux 2023 Python 3.11 (matching Lambda runtime)
+Uses Amazon Linux 2023 Python 3.13 (matching Lambda runtime)
 
 ### Update Certbot Version
 1. Create/activate virtualenv:
 ```bash
-python3.11 -m venv certbot/venv
+python3.13 -m venv certbot/venv
 source certbot/venv/bin/activate
 ```
 
@@ -62,6 +62,8 @@ pip3 install certbot==<VERSION> certbot-dns-route53==<VERSION> [other-plugins]
 ```bash
 pip freeze | grep -v "pkg-resources" > requirements.txt
 ```
+
+**Note:** Ensure dependency versions are compatible with Python 3.13 (e.g., cffi>=2.0.0)
 
 ### Deploy with Terraform
 ```bash
@@ -110,7 +112,9 @@ GitHub Actions workflow (`.github/workflows/release.yml`):
 
 ## Important Implementation Notes
 
-- Always use Python 3.11 to match Lambda runtime (see terraform/variables.tf default)
+- Lambda runtime uses Python 3.13 on Amazon Linux 2023
+- Build environment must match: use `amazonlinux:latest` (AL2023) or `public.ecr.aws/lambda/python:3.13`
 - The Lambda requires sufficient timeout (default 300s) for DNS propagation and ACME challenge
 - IAM permissions needed: Route53 (ListHostedZones, GetChange, ChangeResourceRecordSets) and S3 (ListBucket, PutObject)
 - Certificates are organized by domain name in S3: `{prefix}/{domain}/cert.pem`, etc.
+- ACME account state is tied to email address - using the same email across different Lambda functions may cause "No such authorization" errors if previous runs left stale state
