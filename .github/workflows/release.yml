@@ -14,7 +14,7 @@ jobs:
         run: |
           dnf update -y
           dnf install make tar zip git -y
-          dnf install python3.11 -y
+          dnf install python3.13 python3.13-pip -y
 
       - name: Checkout code
         uses: actions/checkout@v5

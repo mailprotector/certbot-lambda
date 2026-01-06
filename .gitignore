@@ -8,3 +8,12 @@ terraform.tfvars
 override.tf
 
 certbot/
+
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+build/
