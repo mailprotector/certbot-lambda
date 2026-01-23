@@ -75,10 +75,11 @@ terraform apply
 
 ## Environment Variables
 
-### Lambda Environment (set via Terraform)
+### Lambda Environment
 - `DNS_PLUGIN` - Certbot DNS plugin name (default: "dns-route53")
 - `CERTBOT_URL` - Let's Encrypt ACME endpoint (default: production v02 API)
-- Custom variables in `lambda_custom_environment` (e.g., for non-AWS DNS providers like Tencent Cloud)
+- `KEY_TYPE` - Certificate key algorithm type. Valid values: 'rsa' or 'ecdsa' (recommended default: "ecdsa"). ECDSA keys are smaller and more efficient than RSA keys.
+- Custom variables (e.g., for non-AWS DNS providers like Tencent Cloud)
 
 ### Event Payload (from CloudWatch Event)
 - `emails` - Comma-separated email addresses for Let's Encrypt registration
