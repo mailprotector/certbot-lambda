@@ -24,17 +24,6 @@ The Lambda handler follows this sequence:
 - Certificate structure in `/tmp/certbot/live/[domain]/`:
   - cert.pem, chain.pem, fullchain.pem, privkey.pem, README
 
-### Terraform Infrastructure (terraform/)
-- Creates Lambda function with IAM role
-- Provisions Route53 permissions for DNS challenge (if `create_aws_route53_iam_role=true`)
-- Provisions S3 upload permissions (if `create_aws_s3_iam_role=true`)
-- Creates CloudWatch Event Rules for each certificate in `certificates` variable
-- Each event rule triggers Lambda with specific certificate parameters
-
-The `certificates` variable is a map where each entry defines:
-- Scheduling (cron/rate expression)
-- Certificate parameters (emails, domains, S3 destination)
-
 ## Development Commands
 
 ### Build Lambda Package
@@ -65,14 +54,6 @@ pip freeze | grep -v "pkg-resources" > requirements.txt
 
 **Note:** Ensure dependency versions are compatible with Python 3.13 (e.g., cffi>=2.0.0)
 
-### Deploy with Terraform
-```bash
-cd terraform
-terraform init
-terraform plan
-terraform apply
-```
-
 ## Environment Variables
 
 ### Lambda Environment
@@ -92,16 +73,12 @@ terraform apply
 
 The codebase supports multiple DNS providers through Certbot plugins:
 - **Route53** (default): Built-in AWS support, uses IAM role permissions
-- **Other providers**: Specify plugin in `certbot_dns_plugin` variable and provide credentials via `lambda_custom_environment`
+- **Other providers**: Set the `DNS_PLUGIN` environment variable to the desired plugin name and provide required credentials via Lambda environment variables
 
-Example for Tencent Cloud:
-```hcl
-certbot_dns_plugin = "dns-tencentcloud"
-lambda_custom_environment = {
-  TENCENTCLOUD_SECRET_ID  = "..."
-  TENCENTCLOUD_SECRET_KEY = "..."
-}
-```
+Example for Tencent Cloud, configure Lambda environment variables:
+- `DNS_PLUGIN` = "dns-tencentcloud"
+- `TENCENTCLOUD_SECRET_ID` = "..."
+- `TENCENTCLOUD_SECRET_KEY` = "..."
 
 ## CI/CD
 
